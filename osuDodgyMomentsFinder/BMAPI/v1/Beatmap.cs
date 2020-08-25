@@ -654,7 +654,7 @@ namespace BMAPI.v1
             return "";
         }
 
-        private string MD5FromFile(string fileName)
+        public static string MD5FromFile(string fileName)
         {
             using(MD5 md5 = MD5.Create())
             {
@@ -671,7 +671,7 @@ namespace BMAPI.v1
             //Console.WriteLine(ApproachTimeWindow);
             //Console.WriteLine(StackLeniency);
             //Console.WriteLine(stackTimeWindow);
-            float shiftValue = 3.5f;
+            float shiftValue = 1.5f;
 
             Dictionary<int, Point2> toChange = new Dictionary<int, Point2>();
             for(int i = HitObjects.Count - 1; i >= 0; --i)
@@ -728,7 +728,7 @@ namespace BMAPI.v1
 
 		public override string ToString()
 		{
-			return this.Artist + " " + this.Title + " [" + this.Version + "]";
+			return this.Artist + " - " + this.Title + " [" + this.Version + "]";
 		}
 	}
 }
