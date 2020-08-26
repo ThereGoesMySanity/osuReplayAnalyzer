@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{78BA9DB5-35BA-41BA-87F4-E69DDCD266B0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>osuDodgyMomentsFinder</RootNamespace>
     <AssemblyName>osuDodgyMomentsFinder</AssemblyName>
