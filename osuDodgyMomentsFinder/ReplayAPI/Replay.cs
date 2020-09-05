@@ -45,7 +45,7 @@ namespace ReplayAPI
         private bool headerLoaded;
         public bool fullLoaded { get; private set; }
 
-
+        public Replay(string replayFile) : this(replayFile, true, false) {}
         public Replay(string replayFile, bool fullLoad, bool calculateSpeed)
         {
             Filename = replayFile;
