@@ -38,11 +38,13 @@ namespace ReplayAPI
         public int ReplayLength;
         public List<ReplayFrame> ReplayFrames = new List<ReplayFrame>();
         public int Seed;
+        public long OnlineId;
 
         private BinaryReader replayReader;
         private CultureInfo culture = new CultureInfo("en-US", false);
         private bool headerLoaded;
         public bool fullLoaded { get; private set; }
+
 
         public Replay(string replayFile, bool fullLoad, bool calculateSpeed)
         {
@@ -203,6 +205,7 @@ namespace ReplayAPI
             }
 
             ReplayFrames.RemoveRange(0, 3);
+            OnlineId = replayReader.ReadInt64();
 
             //Todo: There are some extra bytes here
         }
