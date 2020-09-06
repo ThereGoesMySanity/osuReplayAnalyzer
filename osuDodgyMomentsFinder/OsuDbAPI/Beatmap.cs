@@ -1,4 +1,6 @@
+using BMAPI.v1;
 using System;
+using System.IO;
 
 namespace OsuDbAPI
 {
@@ -203,6 +205,11 @@ namespace OsuDbAPI
 
         public Beatmap()
         {
+        }
+
+        public BMAPI.v1.Beatmap Load(string songsFolder)
+        {
+            return new BMAPI.v1.Beatmap(Path.Combine(songsFolder, this.FolderName, this.OsuFile));
         }
     }
 }

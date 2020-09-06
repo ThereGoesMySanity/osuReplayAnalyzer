@@ -38,10 +38,18 @@ namespace OsuDbAPI
         {
             get; set;
         }
+        public Dictionary<int, Beatmap> BeatmapsById
+        {
+            get; set;
+        }
+        public Dictionary<string, Beatmap> BeatmapsByHash
+        {
+            get; set;
+        }
 
         private BinaryReader fileReader;
 
-        public OsuDbFile(string fname)
+        public OsuDbFile(string fname, bool byId = false, bool byHash = false)
         {
             if(fname.Length == 0)
             {
@@ -56,11 +64,27 @@ namespace OsuDbAPI
             this.PlayerName = this.readNullableString();
             this.NumBeatmaps = this.fileReader.ReadInt32();
             this.Beatmaps = new List<Beatmap>(this.NumBeatmaps);
+            if (byHash) this.BeatmapsByHash = new Dictionary<string, Beatmap>(this.NumBeatmaps);
+            if (byId) this.BeatmapsById = new Dictionary<int, Beatmap>(this.NumBeatmaps);
             for(int i = 0; i < this.NumBeatmaps; i++)
             {
-                this.Beatmaps.Add(this.readBeatmap());
+                Beatmap b = this.readBeatmap();
+                Beatmaps.Add(b);
+                if (byHash) BeatmapsByHash[b.Hash] = b;
+                if (byId) BeatmapsById[b.ID] = b;
             }
             this.fileReader.Dispose();
+        }
+
+        public Beatmap GetBeatmapFromHash(string mapHash)
+        {
+            if (BeatmapsByHash != null) return BeatmapsByHash[mapHash];
+            else return Beatmaps.Find(b => b.Hash == mapHash);
+        }
+        public Beatmap GetBeatmapFromId(int id)
+        {
+            if (BeatmapsById != null) return BeatmapsById[id];
+            else return Beatmaps.Find(b => b.ID == id);
         }
 
         private string readNullableString()
@@ -92,7 +116,7 @@ namespace OsuDbAPI
         private Beatmap readBeatmap()
         {
             int n;
-            this.fileReader.ReadInt32();
+            if (Version < 20191106) this.fileReader.ReadInt32();
             Beatmap beatmap = new Beatmap();
             beatmap.ArtistName = this.readNullableString();
             beatmap.ArtistNameUnicode = this.readNullableString();
