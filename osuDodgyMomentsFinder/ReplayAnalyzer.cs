@@ -107,6 +107,7 @@ namespace osuDodgyMomentsFinder
 
             int breakIndex = 0;
             int combo = 0;
+            Keys lastPress = Keys.None;
 
             foreach (CircleObject note in beatmap.HitObjects)
             {
@@ -138,7 +139,7 @@ namespace osuDodgyMomentsFinder
                     if (frame.Time - note.StartTime > hitTimeWindow)
                         break;
 
-                    if (pressedKey > 0 && Math.Abs(frame.Time - note.StartTime) <= hitTimeWindow)
+                    if ((pressedKey > 0 || lastPress > 0) && Math.Abs(frame.Time - note.StartTime) <= hitTimeWindow)
                     {
                         if (note.ContainsPoint(new Point2(frame.X, frame.Y)))
                         {
@@ -146,8 +147,15 @@ namespace osuDodgyMomentsFinder
                             ++combo;
                             frame.combo = combo;
                             noteHitFlag = true;
-                            hits.Add(new HitFrame(note, frame, pressedKey));
-                            keyIndex = j + 1;
+                            hits.Add(new HitFrame(note, frame, (lastPress > 0? lastPress : pressedKey)));
+                            keyIndex = j + (lastPress > 0 ? 0 : 1);
+                            if ((pressedKey.HasFlag(Keys.M1) && pressedKey.HasFlag(Keys.M2))
+                            || (pressedKey.HasFlag(Keys.M1) && pressedKey.HasFlag(Keys.K2))
+                            || (pressedKey.HasFlag(Keys.K1) && pressedKey.HasFlag(Keys.M2))
+                            || (pressedKey.HasFlag(Keys.K1) && pressedKey.HasFlag(Keys.K2)))
+                                lastPress = pressedKey;
+                            else
+                                lastPress = Keys.None;
                             break;
                         }
                         if (Utils.dist(note.Location.X, note.Location.Y, frame.X, frame.Y) > 150)
