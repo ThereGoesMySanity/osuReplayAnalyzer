@@ -38,13 +38,14 @@ namespace ReplayAPI
         public int ReplayLength;
         public List<ReplayFrame> ReplayFrames = new List<ReplayFrame>();
         public int Seed;
-        public long OnlineId;
+        public ulong OnlineId;
 
-        private BinaryReader replayReader;
+        public BinaryReader replayReader;
         private CultureInfo culture = new CultureInfo("en-US", false);
-        private bool headerLoaded;
+        public bool headerLoaded;
         public bool fullLoaded { get; private set; }
 
+        public Replay() {}
         public Replay(string replayFile) : this(replayFile, true, false) {}
         public Replay(string replayFile, bool fullLoad, bool calculateSpeed)
         {
@@ -172,7 +173,7 @@ namespace ReplayAPI
             if (ReplayLength > 0)
             {
                 int lastTime = 0;
-                using (MemoryStream codedStream = LZMACoder.Decompress(replayReader.BaseStream as FileStream))
+                using (MemoryStream codedStream = LZMACoder.Decompress(replayReader.BaseStream))
                 using (StreamReader sr = new StreamReader(codedStream))
                 {
                     foreach (string frame in sr.ReadToEnd().Split(','))
@@ -205,7 +206,7 @@ namespace ReplayAPI
             }
 
             ReplayFrames.RemoveRange(0, 3);
-            OnlineId = replayReader.ReadInt64();
+            OnlineId = replayReader.ReadUInt64();
 
             //Todo: There are some extra bytes here
         }
@@ -261,6 +262,7 @@ namespace ReplayAPI
                         bw.Write(rawBytesCompressed);
                     }
                 }
+                bw.Write(OnlineId);
             }
         }
 

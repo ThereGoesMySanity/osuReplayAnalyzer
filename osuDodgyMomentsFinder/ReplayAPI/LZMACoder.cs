@@ -49,7 +49,7 @@ namespace ReplayAPI
             return outStream;
         }
 
-        public static MemoryStream Decompress(FileStream inStream)
+        public static MemoryStream Decompress(Stream inStream)
         {
             Decoder decoder = new Decoder();
 

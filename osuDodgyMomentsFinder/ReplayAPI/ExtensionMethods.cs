@@ -14,9 +14,9 @@ namespace ReplayAPI
         }
     }
 
-    internal static class BinaryReaderExtensions
+    public static class BinaryReaderExtensions
     {
-        internal static string ReadNullableString(this BinaryReader br)
+        public static string ReadNullableString(this BinaryReader br)
         {
             if(br.ReadByte() != 0x0B)
                 return null;
@@ -24,9 +24,9 @@ namespace ReplayAPI
         }
     }
 
-    internal static class BinaryWriterExtensions
+    public static class BinaryWriterExtensions
     {
-        internal static void WriteNullableString(this BinaryWriter bw, string data)
+        public static void WriteNullableString(this BinaryWriter bw, string data)
         {
             if(string.IsNullOrEmpty(data))
                 bw.Write((byte)0);
