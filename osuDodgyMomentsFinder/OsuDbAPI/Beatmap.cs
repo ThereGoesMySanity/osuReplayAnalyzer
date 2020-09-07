@@ -202,6 +202,17 @@ namespace OsuDbAPI
         {
             get; set;
         }
+        public string[] SearchableTerms => new[]
+        {
+            Creator,
+            ArtistName,
+            ArtistNameUnicode,
+            SongTitle,
+            SongTitleUnicode,
+            //Difficulty,
+            Source,
+            Tags
+        };
 
         public Beatmap()
         {
@@ -210,6 +221,11 @@ namespace OsuDbAPI
         public BMAPI.v1.Beatmap Load(string songsFolder)
         {
             return new BMAPI.v1.Beatmap(Path.Combine(songsFolder, this.FolderName, this.OsuFile));
+        }
+
+        public override string ToString()
+        {
+            return $"{ArtistName} - {SongTitle} [{Difficulty}] ({Creator})";
         }
     }
 }

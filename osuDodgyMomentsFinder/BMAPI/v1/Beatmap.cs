@@ -409,8 +409,7 @@ namespace BMAPI.v1
 
                             ((SliderObject)newObject).RepeatCount = Convert.ToInt32(reSplit[6]);
                             ((SliderObject)newObject).PixelLength = Convert.ToSingle(reSplit[7]);
-                            float tempMaxPoints;
-                            if(float.TryParse(reSplit[7], out tempMaxPoints))
+                            if (float.TryParse(reSplit[7], out float tempMaxPoints))
                             {
                                 ((SliderObject)newObject).MaxPoints = tempMaxPoints;
                             }
@@ -666,7 +665,7 @@ namespace BMAPI.v1
         private void recalculateStackCoordinates()
         {
             double ApproachTimeWindow = 1800 - 120 * ApproachRate;
-            double stackTimeWindow = (ApproachTimeWindow * (StackLeniency.HasValue ? StackLeniency.Value : 7));
+            double stackTimeWindow = (ApproachTimeWindow * (StackLeniency ?? 7));
 
             //Console.WriteLine(ApproachTimeWindow);
             //Console.WriteLine(StackLeniency);
