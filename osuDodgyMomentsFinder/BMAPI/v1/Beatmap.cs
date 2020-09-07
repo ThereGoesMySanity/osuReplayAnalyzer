@@ -707,6 +707,7 @@ namespace BMAPI.v1
         }
 
         private bool hardRock = false;
+        private bool easy = false;
 
         public void applyHardRock()
         {
@@ -715,14 +716,31 @@ namespace BMAPI.v1
             hardRock = true;
 
             CircleSize = CircleSize * 1.3f;
-            OverallDifficulty = OverallDifficulty * 1.3f;
-            ApproachRate = ApproachRate * 1.3f;
+            OverallDifficulty = OverallDifficulty * 1.4f;
+            ApproachRate = ApproachRate * 1.4f;
             if (CircleSize > 10)
                 CircleSize = 10;
             if (OverallDifficulty > 10)
                 OverallDifficulty = 10;
             if (ApproachRate > 10)
                 ApproachRate = 10;
+        }
+
+        public void applyEasy()
+        {
+            if (easy)
+                return;
+            easy = true;
+
+            CircleSize = CircleSize / 2f;
+            OverallDifficulty = OverallDifficulty / 2f;
+            ApproachRate = ApproachRate / 2f;
+            if (CircleSize < 0)
+                CircleSize = 0;
+            if (OverallDifficulty < 0)
+                OverallDifficulty = 0;
+            if (ApproachRate < 0)
+                ApproachRate = 0;
         }
 
 		public override string ToString()

@@ -105,6 +105,11 @@ namespace osuDodgyMomentsFinder
                 applyHardrock();
             }
 
+            if (replay.Mods.HasFlag(Mods.Easy))
+            {
+                beatmap.applyEasy();
+            }
+
             int breakIndex = 0;
             int combo = 0;
             Keys lastPress = Keys.None;
