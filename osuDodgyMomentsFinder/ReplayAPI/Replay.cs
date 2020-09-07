@@ -205,7 +205,7 @@ namespace ReplayAPI
                 fullLoaded = true;
             }
 
-            ReplayFrames.RemoveRange(0, 3);
+            // ReplayFrames.RemoveRange(0, 3);
             OnlineId = replayReader.ReadUInt64();
 
             //Todo: There are some extra bytes here
