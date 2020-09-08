@@ -1,6 +1,8 @@
 using BMAPI.v1;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace OsuDbAPI
 {
@@ -202,7 +204,7 @@ namespace OsuDbAPI
         {
             get; set;
         }
-        public string[] SearchableTerms => new[]
+        public IEnumerable<string> SearchableTerms => new[]
         {
             Creator,
             ArtistName,
@@ -212,7 +214,7 @@ namespace OsuDbAPI
             //Difficulty,
             Source,
             Tags
-        };
+        }.Where(s => !string.IsNullOrEmpty(s));
 
         public Beatmap()
         {
