@@ -672,7 +672,6 @@ namespace BMAPI.v1
             //Console.WriteLine(ApproachTimeWindow);
             //Console.WriteLine(StackLeniency);
             //Console.WriteLine(stackTimeWindow);
-            float shiftValue = 1.5f;
 
             Dictionary<int, Point2> toChange = new Dictionary<int, Point2>();
             for(int i = HitObjects.Count - 1; i >= 0; --i)
@@ -706,7 +705,7 @@ namespace BMAPI.v1
                         currHitObject.StackHeight++;
                         startTime = HitObjects[j].EndTime;
                     }
-                    else if (Vector2Extensions.Distance(HitObjects[j].Position, position2) < stack_distance)
+                    else if (Vector2.Distance(HitObjects[j].Location.ToVector2(), position2) < stack_distance)
                     {
                         // Case for sliders - bump notes down and right, rather than up and left.
                         sliderStack++;
@@ -714,29 +713,6 @@ namespace BMAPI.v1
                         startTime = HitObjects[j].EndTime;
                     }
                 }
-                for(int j = i - 1; j >= 0; --j)
-                {
-                    if(HitObjects[i].StartTime - HitObjects[j].StartTime <= stackTimeWindow)
-                    {
-                        if(HitObjects[i].Location.DistanceTo(HitObjects[j].Location) < 3)
-                        {
-                            var newPoint = toChange.ContainsKey(i) ? 
-                                    new Point2(toChange[i].X - shiftValue, toChange[i].Y - shiftValue) 
-                                    : new Point2(HitObjects[i].Location.X - shiftValue, HitObjects[i].Location.Y - shiftValue);
-                            toChange.Add(j, newPoint);
-                            //HitObjects[j].Location = new Point2(HitObjects[i].Location.X - 4, HitObjects[i].Location.Y - 4);
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            foreach(var pair in toChange)
-            {
-                HitObjects[pair.Key].Location = pair.Value;
             }
 
         }

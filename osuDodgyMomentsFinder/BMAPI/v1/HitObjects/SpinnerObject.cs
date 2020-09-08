@@ -8,7 +8,7 @@ namespace BMAPI.v1.HitObjects
         }
         public SpinnerObject(CircleObject baseInstance) : base(baseInstance) { }
 
-        public float EndTime
+        public override float EndTime
         {
             get; set;
         }

@@ -33,7 +33,7 @@ namespace BMAPI.v1.HitObjects
         {
             get; set;
         }
-        public override double EndTime => StartTime + duration;
+        public override float EndTime => StartTime + SegmentEndTime * RepeatCount;
         private float _TotalLength = -1;
         public float TotalLength
         {
