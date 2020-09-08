@@ -70,7 +70,7 @@ namespace OsuDbAPI
             {
                 Beatmap b = this.readBeatmap();
                 Beatmaps.Add(b);
-                if (byHash) BeatmapsByHash[b.Hash] = b;
+                if (byHash && b.Hash != null) BeatmapsByHash[b.Hash] = b;
                 if (byId) BeatmapsById[b.ID] = b;
             }
             this.fileReader.Dispose();
