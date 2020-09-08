@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using BMAPI.v1.Events;
 using BMAPI.v1.HitObjects;
+using osuDodgyMomentsFinder;
 
 namespace BMAPI.v1
 {
@@ -77,7 +78,7 @@ namespace BMAPI.v1
                 p_CircleSize = value;
                 foreach(CircleObject hO in HitObjects)
                 {
-                    hO.Radius = (float)(54.42 - 4.48 * value);
+                    hO.Radius = 64f * (1.0f - 0.7f * (CircleSize - 5) / 5) / 2;
                 }
             }
         }
@@ -664,8 +665,9 @@ namespace BMAPI.v1
 
         private void recalculateStackCoordinates()
         {
-            double ApproachTimeWindow = 1800 - 120 * ApproachRate;
+            double ApproachTimeWindow = Math.Min(1800 - 120 * ApproachRate, 1950 - 150 * ApproachRate);
             double stackTimeWindow = (ApproachTimeWindow * (StackLeniency ?? 7));
+            float stack_distance = 3;
 
             //Console.WriteLine(ApproachTimeWindow);
             //Console.WriteLine(StackLeniency);
@@ -680,14 +682,47 @@ namespace BMAPI.v1
                 {
                     int u = 0;
                 }*/
+                CircleObject currHitObject = HitObjects[i];
 
+                if (currHitObject.StackHeight != 0 && !(currHitObject is SliderObject))
+                    continue;
+
+                double startTime = currHitObject.EndTime;
+                int sliderStack = 0;
+
+                for (int j = i + 1; j < HitObjects.Count; j++)
+                {
+
+                    if (HitObjects[j].StartTime - stackTimeWindow > startTime)
+                        break;
+
+                    // The start position of the hitobject, or the position at the end of the path if the hitobject is a slider
+                    Vector2 position2 = currHitObject is SliderObject currSlider
+                        ? currSlider.Location.ToVector2() + currSlider.PositionAtTime(1)
+                        : currHitObject.Location.ToVector2();
+
+                    if (HitObjects[j].Location.DistanceTo(currHitObject.Location) < stack_distance)
+                    {
+                        currHitObject.StackHeight++;
+                        startTime = HitObjects[j].EndTime;
+                    }
+                    else if (Vector2Extensions.Distance(HitObjects[j].Position, position2) < stack_distance)
+                    {
+                        // Case for sliders - bump notes down and right, rather than up and left.
+                        sliderStack++;
+                        HitObjects[j].StackHeight -= sliderStack;
+                        startTime = HitObjects[j].EndTime;
+                    }
+                }
                 for(int j = i - 1; j >= 0; --j)
                 {
                     if(HitObjects[i].StartTime - HitObjects[j].StartTime <= stackTimeWindow)
                     {
-                        if(HitObjects[i].Location == HitObjects[j].Location)
+                        if(HitObjects[i].Location.DistanceTo(HitObjects[j].Location) < 3)
                         {
-                            var newPoint = toChange.ContainsKey(i) ? new Point2(toChange[i].X - shiftValue, toChange[i].Y - shiftValue) : new Point2(HitObjects[i].Location.X - shiftValue, HitObjects[i].Location.Y - shiftValue);
+                            var newPoint = toChange.ContainsKey(i) ? 
+                                    new Point2(toChange[i].X - shiftValue, toChange[i].Y - shiftValue) 
+                                    : new Point2(HitObjects[i].Location.X - shiftValue, HitObjects[i].Location.Y - shiftValue);
                             toChange.Add(j, newPoint);
                             //HitObjects[j].Location = new Point2(HitObjects[i].Location.X - 4, HitObjects[i].Location.Y - 4);
                             break;
@@ -715,15 +750,10 @@ namespace BMAPI.v1
                 return;
             hardRock = true;
 
-            CircleSize = CircleSize * 1.3f;
-            OverallDifficulty = OverallDifficulty * 1.4f;
-            ApproachRate = ApproachRate * 1.4f;
-            if (CircleSize > 10)
-                CircleSize = 10;
-            if (OverallDifficulty > 10)
-                OverallDifficulty = 10;
-            if (ApproachRate > 10)
-                ApproachRate = 10;
+            const float ratio = 1.4f;
+            CircleSize = Math.Min(CircleSize * 1.3f, 10.0f);
+            ApproachRate = Math.Min(ApproachRate * ratio, 10.0f);
+            OverallDifficulty = Math.Min(OverallDifficulty * ratio, 10.0f);
         }
 
         public void applyEasy()
@@ -732,15 +762,10 @@ namespace BMAPI.v1
                 return;
             easy = true;
 
-            CircleSize = CircleSize / 2f;
-            OverallDifficulty = OverallDifficulty / 2f;
-            ApproachRate = ApproachRate / 2f;
-            if (CircleSize < 0)
-                CircleSize = 0;
-            if (OverallDifficulty < 0)
-                OverallDifficulty = 0;
-            if (ApproachRate < 0)
-                ApproachRate = 0;
+            const float ratio = 0.5f;
+            CircleSize *= ratio;
+            ApproachRate *= ratio;
+            OverallDifficulty *= ratio;
         }
 
 		public override string ToString()

@@ -33,6 +33,7 @@ namespace BMAPI.v1.HitObjects
         {
             get; set;
         }
+        public override double EndTime => StartTime + duration;
         private float _TotalLength = -1;
         public float TotalLength
         {

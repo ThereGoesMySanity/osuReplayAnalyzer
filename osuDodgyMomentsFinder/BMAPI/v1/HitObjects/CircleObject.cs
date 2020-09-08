@@ -27,6 +27,10 @@ namespace BMAPI.v1.HitObjects
         {
             get; set;
         }
+        public int StackHeight { get; internal set; } = 0;
+        public Point2 StackOffset(float circleSize) => new Point2(StackHeight * ((1.0f - 0.7f * (circleSize - 5) / 5) / 2) * -6.4f);
+        public virtual double EndTime => StartTime;
+
         public EffectType Effect = EffectType.None;
 
         public virtual bool ContainsPoint(Point2 Point)
