@@ -29,7 +29,11 @@ namespace BMAPI.v1.HitObjects
         }
         public int StackHeight { get; internal set; } = 0;
         public Point2 StackOffset(float circleSize) => new Point2(StackHeight * ((1.0f - 0.7f * (circleSize - 5) / 5) / 2) * -6.4f);
-        public virtual float EndTime => StartTime;
+        public virtual float EndTime
+        {
+            get => StartTime;
+            set => throw new System.NotImplementedException();
+        }
 
         public EffectType Effect = EffectType.None;
 
