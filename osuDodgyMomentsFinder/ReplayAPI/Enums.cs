@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ReplayAPI
 {
@@ -73,6 +75,51 @@ namespace ReplayAPI
         Mania6K = (1 << 17),
         Mania7K = (1 << 18),
         Mania8K = (1 << 19),
+
+    }
+    public static class ConvertMods
+    {
+        private static Dictionary<Mods, string> names = new Dictionary<Mods, string>
+        {
+            [Mods.NoFail] = "NF",
+            [Mods.Easy] = "EZ",
+            [Mods.TouchDevice] = "TD",
+            [Mods.Hidden] = "HD",
+            [Mods.HardRock] = "HR",
+            [Mods.SuddenDeath] = "SD",
+            [Mods.DoubleTime] = "DT",
+            [Mods.HalfTime] = "HT",
+            [Mods.NightCore] = "NC",
+            [Mods.FlashLight] = "FL",
+            [Mods.Perfect] = "PF",
+        };
+        private static Dictionary<string, int> modValues = new Dictionary<string, int>
+        {
+            ["NF"] = (int)Mods.NoFail,
+            ["EZ"] = (int)Mods.Easy,
+            ["TD"] = (int)Mods.TouchDevice,
+            ["HD"] = (int)Mods.Hidden,
+            ["HR"] = (int)Mods.HardRock,
+            ["SD"] = (int)Mods.SuddenDeath,
+            ["DT"] = (int)Mods.DoubleTime,
+            ["HT"] = (int)Mods.HalfTime,
+            ["NC"] = (int)Mods.NightCore,
+            ["FL"] = (int)Mods.FlashLight,
+            ["PF"] = (int)Mods.Perfect,
+        };
+        public static string ModsToString(this Mods mods)
+        {
+            if (mods == Mods.None) return "None";
+            return string.Join("", names.Where(m => mods.HasFlag(m.Key)).Select(m => m.Value));
+        }
+        public static Mods StringToMods(string mods)
+        {
+            return StringToMods(Enumerable.Range(0, mods.Length / 2).Select(i => mods.Substring(i * 2, 2)));
+        }
+        public static Mods StringToMods(IEnumerable<string> mods)
+        {
+            return (Mods)mods.Select(s => modValues[s]).Sum();
+        }
     }
 
     public enum GameModes
