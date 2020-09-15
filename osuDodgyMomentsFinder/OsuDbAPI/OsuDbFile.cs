@@ -56,7 +56,7 @@ namespace OsuDbAPI
                 return;
             }
 
-            this.fileReader = new BinaryReader(new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.Read));
+            this.fileReader = new BinaryReader(new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             this.Version = this.fileReader.ReadInt32();
             this.FolderCount = this.fileReader.ReadInt32();
             this.AccountUnlocked = this.fileReader.ReadBoolean();

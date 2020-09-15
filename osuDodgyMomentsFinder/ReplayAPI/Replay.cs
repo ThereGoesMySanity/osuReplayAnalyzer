@@ -50,7 +50,7 @@ namespace ReplayAPI
         public Replay(string replayFile, bool fullLoad, bool calculateSpeed)
         {
             Filename = replayFile;
-            using (replayReader = new BinaryReader(new FileStream(replayFile, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            using (replayReader = new BinaryReader(new FileStream(replayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 loadHeader();
                 if (fullLoad)
