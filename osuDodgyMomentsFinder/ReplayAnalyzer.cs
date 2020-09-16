@@ -146,7 +146,7 @@ namespace osuDodgyMomentsFinder
 
                     if ((pressedKey > 0 || lastPress > 0) && Math.Abs(frame.Time - note.StartTime) <= hitTimeWindow)
                     {
-                        if (note.ContainsPoint(new Point2(frame.X, frame.Y)))
+                        if (note.ContainsPoint(new Point2(frame.X, frame.Y)) && !(note is SliderObject slider && slider.SegmentEndTime <= frame.Time))
                         {
                             noteAttemptedHitFlag = true;
                             ++combo;
