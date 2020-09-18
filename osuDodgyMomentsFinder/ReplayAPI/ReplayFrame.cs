@@ -23,5 +23,24 @@ namespace ReplayAPI
         {
             return string.Format("{0}({1}): ({2},{3}) {4} {5}", Time, TimeDiff, X, Y, Keys, travelledDistanceDiff);
         }
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            var frame = obj as ReplayFrame;
+            return Time == frame.Time 
+                && TimeDiff == frame.TimeDiff 
+                && X == frame.X 
+                && Y == frame.Y 
+                && Keys == frame.Keys 
+                && travelledDistanceDiff == frame.travelledDistanceDiff;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
