@@ -30,7 +30,8 @@ namespace BMAPI.v1.HitObjects
         }
         public Beatmap Beatmap;
         public int StackHeight { get; internal set; } = 0;
-        public Point2 StackOffset => new Point2(StackHeight * Radius * -0.1f);
+        private float _stackOffset => StackHeight * Radius * -0.1f;
+        public Point2 StackOffset => new Point2(_stackOffset, _stackOffset * (Beatmap.hardRock? -1 : 1));
         public virtual float EndTime
         {
             get => StartTime;

@@ -701,7 +701,7 @@ namespace BMAPI.v1
             }
         }
 
-        private bool hardRock = false;
+        internal bool hardRock = false;
         private bool easy = false;
 
         public void applyHardRock()
