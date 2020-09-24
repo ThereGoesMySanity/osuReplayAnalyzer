@@ -169,12 +169,12 @@ namespace BMAPI.v1.HitObjects
                 if(sum + curve.Length >= d)
                 {
                     // put distance relative to the curve's start point
-                    return curve.PositionAtDistance(d - sum);
+                    return curve.PositionAtDistance(d - sum) + StackOffset.ToVector2();
                 }
                 sum += curve.Length;
             }
             Curve lastCurve = this.Curves[this.Curves.Count - 1];
-            return lastCurve.PositionAtDistance(d - (sum - lastCurve.Length));
+            return lastCurve.PositionAtDistance(d - (sum - lastCurve.Length)) + StackOffset.ToVector2();
         }
     }
 }

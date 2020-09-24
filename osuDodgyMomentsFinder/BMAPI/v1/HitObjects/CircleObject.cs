@@ -10,15 +10,16 @@ namespace BMAPI.v1.HitObjects
         public CircleObject(CircleObject baseInstance)
         {
             //Copy from baseInstance
-            Location = baseInstance.Location;
-            Radius = baseInstance.Radius;
+            BaseLocation = baseInstance.BaseLocation;
             StartTime = baseInstance.StartTime;
             Type = baseInstance.Type;
             Effect = baseInstance.Effect;
+            Beatmap = baseInstance.Beatmap;
         }
 
-        public Point2 Location = new Point2(0, 0);
-        public double Radius = 80;
+        public Point2 BaseLocation = new Point2(0, 0);
+        public Point2 Location => BaseLocation + StackOffset;
+        public float Radius => 64f * (1.0f - 0.7f * (Beatmap.CircleSize - 5) / 5) / 2;
         public float StartTime
         {
             get; set;
@@ -27,8 +28,9 @@ namespace BMAPI.v1.HitObjects
         {
             get; set;
         }
+        public Beatmap Beatmap;
         public int StackHeight { get; internal set; } = 0;
-        public Point2 StackOffset(float circleSize) => new Point2(StackHeight * ((1.0f - 0.7f * (circleSize - 5) / 5) / 2) * -6.4f);
+        public Point2 StackOffset => new Point2(StackHeight * Radius * -0.1f);
         public virtual float EndTime
         {
             get => StartTime;

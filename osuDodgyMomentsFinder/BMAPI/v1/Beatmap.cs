@@ -66,22 +66,7 @@ namespace BMAPI.v1
 
         //Difficulty
         public float HPDrainRate = 5;
-        private float p_CircleSize = 5;
-        public float CircleSize
-        {
-            get
-            {
-                return p_CircleSize;
-            }
-            set
-            {
-                p_CircleSize = value;
-                foreach(CircleObject hO in HitObjects)
-                {
-                    hO.Radius = 64f * (1.0f - 0.7f * (CircleSize - 5) / 5) / 2;
-                }
-            }
-        }
+        public float CircleSize = 5;
         public float OverallDifficulty = 5;
         public float ApproachRate = 5;
         public float SliderMultiplier = 1.4f;
@@ -364,11 +349,11 @@ namespace BMAPI.v1
                         string[] reSplit = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                         CircleObject newObject = new CircleObject
                         {
-                            Radius = (float)(54.42 - 4.48 * Info.CircleSize),
-                            Location = new Point2(Convert.ToInt32(reSplit[0]), Convert.ToInt32(reSplit[1])),
+                            BaseLocation = new Point2(Convert.ToInt32(reSplit[0]), Convert.ToInt32(reSplit[1])),
                             StartTime = (float)Convert.ToDouble(reSplit[2]),
                             Type = (HitObjectType)Convert.ToInt32(reSplit[3]),
-                            Effect = (EffectType)Convert.ToInt32(reSplit[4])
+                            Effect = (EffectType)Convert.ToInt32(reSplit[4]),
+                            Beatmap = this,
                         };
                         if((newObject.Type & HitObjectType.Slider) > 0)
                         {
@@ -392,7 +377,7 @@ namespace BMAPI.v1
                             }
                             string[] pts = reSplit[5].Split(new[] { "|" }, StringSplitOptions.None);
 
-                            ((SliderObject)newObject).Points.Add(newObject.Location + new Point2());
+                            ((SliderObject)newObject).Points.Add(newObject.BaseLocation + new Point2());
 
                             //Always exclude index 1, this will contain the type
                             for(int i = 1; i <= pts.Length - 1; i++)
@@ -545,18 +530,18 @@ namespace BMAPI.v1
                             {
                                 if(obj.GetType() == typeof(CircleObject))
                                 {
-                                    Save("HitObjects", obj.Location.X + "," + obj.Location.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect);
+                                    Save("HitObjects", obj.BaseLocation.X + "," + obj.BaseLocation.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect);
                                 }
                                 else if(obj.GetType() == typeof(SliderObject))
                                 {
                                     SliderObject sliderInfo = (SliderObject)obj;
                                     string pointString = sliderInfo.Points.Aggregate("", (current, p) => current + ("|" + p.X + ':' + p.Y));
-                                    Save("HitObjects", obj.Location.X + "," + obj.Location.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect + "," + sliderInfo.Type.ToString().Substring(0, 1) + pointString + "," + sliderInfo.RepeatCount + "," + sliderInfo.MaxPoints);
+                                    Save("HitObjects", obj.BaseLocation.X + "," + obj.BaseLocation.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect + "," + sliderInfo.Type.ToString().Substring(0, 1) + pointString + "," + sliderInfo.RepeatCount + "," + sliderInfo.MaxPoints);
                                 }
                                 else if(obj.GetType() == typeof(SpinnerObject))
                                 {
                                     SpinnerObject spinnerInfo = (SpinnerObject)obj;
-                                    Save("HitObjects", obj.Location.X + "," + obj.Location.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect + "," + spinnerInfo.EndTime);
+                                    Save("HitObjects", obj.BaseLocation.X + "," + obj.BaseLocation.Y + "," + obj.StartTime + "," + (int)obj.Type + "," + (int)obj.Effect + "," + spinnerInfo.EndTime);
                                 }
                             }
                             break;
@@ -697,15 +682,15 @@ namespace BMAPI.v1
 
                     // The start position of the hitobject, or the position at the end of the path if the hitobject is a slider
                     Vector2 position2 = currHitObject is SliderObject currSlider
-                        ? currSlider.Location.ToVector2() + currSlider.PositionAtTime(1)
-                        : currHitObject.Location.ToVector2();
+                        ? currSlider.BaseLocation.ToVector2() + currSlider.PositionAtTime(1)
+                        : currHitObject.BaseLocation.ToVector2();
 
-                    if (HitObjects[j].Location.DistanceTo(currHitObject.Location) < stack_distance)
+                    if (HitObjects[j].BaseLocation.DistanceTo(currHitObject.BaseLocation) < stack_distance)
                     {
                         currHitObject.StackHeight++;
                         startTime = HitObjects[j].EndTime;
                     }
-                    else if (Vector2.Distance(HitObjects[j].Location.ToVector2(), position2) < stack_distance)
+                    else if (Vector2.Distance(HitObjects[j].BaseLocation.ToVector2(), position2) < stack_distance)
                     {
                         // Case for sliders - bump notes down and right, rather than up and left.
                         sliderStack++;
@@ -714,7 +699,6 @@ namespace BMAPI.v1
                     }
                 }
             }
-
         }
 
         private bool hardRock = false;
