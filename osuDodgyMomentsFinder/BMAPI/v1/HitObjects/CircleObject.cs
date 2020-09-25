@@ -19,7 +19,7 @@ namespace BMAPI.v1.HitObjects
 
         public Point2 BaseLocation = new Point2(0, 0);
         public Point2 Location => BaseLocation + StackOffset;
-        public float Radius => 64f * (1.0f - 0.7f * (Beatmap.CircleSize - 5) / 5) / 2;
+        public double Radius => 23.05 - (Beatmap.CircleSize - 7) * 4.4825;
         public float StartTime
         {
             get; set;
@@ -30,7 +30,7 @@ namespace BMAPI.v1.HitObjects
         }
         public Beatmap Beatmap;
         public int StackHeight { get; internal set; } = 0;
-        private float _stackOffset => StackHeight * Radius * -0.1f;
+        private float _stackOffset => (float)(StackHeight * Radius * -0.1f);
         public Point2 StackOffset => new Point2(_stackOffset, _stackOffset * (Beatmap.hardRock? -1 : 1));
         public virtual float EndTime
         {
