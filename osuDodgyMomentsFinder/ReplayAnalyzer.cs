@@ -435,7 +435,7 @@ namespace osuDodgyMomentsFinder
 
         private double calcTimeWindow(double OD)
         {
-            return -12 * OD + 259.5;
+            return -10 * OD + 199.5;
         }
 
         public ReplayAnalyzer(Beatmap beatmap, Replay replay)
