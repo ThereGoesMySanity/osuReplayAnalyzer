@@ -1,4 +1,5 @@
 ﻿using osuDodgyMomentsFinder;
+using System.Collections.Generic;
 
 namespace ReplayViewer.Curves
 {
@@ -7,6 +8,8 @@ namespace ReplayViewer.Curves
         public Catmull() : base(BMAPI.v1.SliderType.CSpline)
         {
         }
+
+        protected override bool Linear => true;
 
         protected override Vector2 Interpolate(float t)
         {

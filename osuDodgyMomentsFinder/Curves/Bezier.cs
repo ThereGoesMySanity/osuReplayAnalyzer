@@ -4,6 +4,7 @@ namespace ReplayViewer.Curves
 {
     public class Bezier : Curve
     {
+        protected override bool Linear => Points.Count == 2;
         public Bezier() : base(BMAPI.v1.SliderType.Bezier)
         {
         }

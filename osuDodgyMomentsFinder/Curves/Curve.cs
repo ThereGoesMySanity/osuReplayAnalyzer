@@ -17,10 +17,11 @@ namespace ReplayViewer.Curves
         {
             get; set;
         }
+        protected abstract bool Linear { get; }
         // list of only the control points relevent to this curve
         protected List<Vector2> Points;
         // points along the curve where segment length, 't' interpolation value, and location is recorded
-        protected List<DistanceTime> CurveSnapshots;
+        public List<DistanceTime> CurveSnapshots;
         // when the curve should stop being drawn
         // this only applies if this is the last curve in the slider
         public float PixelLength
@@ -56,9 +57,30 @@ namespace ReplayViewer.Curves
         // i.e. from 0.00 to 0.25 is probably not the same distance as 0.25 to 0.50
         protected abstract Vector2 Interpolate(float t);
 
-        private float CalculateLength(float prec = 0.01f)
+        private float CalculateLength(float prec = 0.1f)
         {
+            AddDistanceTime(0, 0, Points[0] + new Vector2());
             float sum = 0;
+            if (Linear)
+            {
+                if(Points.Count == 2)
+                {
+                    var distance = Distance(Points[0], Points[1]);
+                    if(PixelLength > 0 && distance > this.PixelLength)
+                    {
+                        AddDistanceTime(this.PixelLength, 1, Lerp(Points[0], Points[1], PixelLength / distance));
+                    }
+                    else
+                    {
+                        AddDistanceTime(distance, 1, Points[1]);
+                    }
+                    return distance;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
             for(float f = 0; f < 1f; f += prec)
             {
                 if(f > 1)
@@ -77,7 +99,7 @@ namespace ReplayViewer.Curves
                 {
                     sum += distance;
                     // take a snapshot of the current position, t value, and distance along the curve
-                    this.AddDistanceTime(sum, f, b);
+                    this.AddDistanceTime(sum, fplus, b);
                 }
                 else
                 {

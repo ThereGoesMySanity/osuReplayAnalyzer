@@ -1,5 +1,6 @@
 ﻿using osuDodgyMomentsFinder;
 using System;
+using System.Collections.Generic;
 
 namespace ReplayViewer.Curves
 {
@@ -8,6 +9,8 @@ namespace ReplayViewer.Curves
         public Circle() : base(BMAPI.v1.SliderType.PSpline)
         {
         }
+
+        protected override bool Linear => this.Points.Count != 3;
 
         protected override Vector2 Interpolate(float t)
         {

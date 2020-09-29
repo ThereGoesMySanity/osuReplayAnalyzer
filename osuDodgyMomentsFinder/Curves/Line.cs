@@ -1,9 +1,12 @@
 ﻿using osuDodgyMomentsFinder;
+using System.Collections.Generic;
 
 namespace ReplayViewer.Curves
 {
     public class Line : Curve
     {
+        protected override bool Linear => true;
+
         public Line() : base(BMAPI.v1.SliderType.Linear)
         {
         }
