@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace OsuDbAPI
 {
@@ -78,8 +79,8 @@ namespace OsuDbAPI
 
         public Beatmap GetBeatmapFromHash(string mapHash)
         {
-            if (BeatmapsByHash != null && BeatmapsByHash.ContainsKey(mapHash))
-                return BeatmapsByHash[mapHash];
+            if (BeatmapsByHash != null)
+                return BeatmapsByHash.ContainsKey(mapHash) ? BeatmapsByHash[mapHash] : null;
             else
                 return Beatmaps.Find(b => b.Hash == mapHash);
         }
