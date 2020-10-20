@@ -78,12 +78,14 @@ namespace OsuDbAPI
 
         public Beatmap GetBeatmapFromHash(string mapHash)
         {
-            if (BeatmapsByHash != null) return BeatmapsByHash[mapHash];
-            else return Beatmaps.Find(b => b.Hash == mapHash);
+            if (BeatmapsByHash != null && BeatmapsByHash.ContainsKey(mapHash))
+                return BeatmapsByHash[mapHash];
+            else
+                return Beatmaps.Find(b => b.Hash == mapHash);
         }
         public Beatmap GetBeatmapFromId(int id)
         {
-            if (BeatmapsById != null) return BeatmapsById[id];
+            if (BeatmapsById != null && BeatmapsById.ContainsKey(id)) return BeatmapsById[id];
             else return Beatmaps.Find(b => b.ID == id);
         }
 
