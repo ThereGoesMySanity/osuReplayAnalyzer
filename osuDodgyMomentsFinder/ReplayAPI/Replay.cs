@@ -58,8 +58,8 @@ namespace ReplayAPI
                     Load();
                 }
             }
-            if (fullLoad && !fullLoaded)
-                throw new Exception("Replay is not full but requsted to be read full.");
+            // if (fullLoad && !fullLoaded)
+            //     throw new Exception("Replay is not full but requsted to be read full.");
             if (calculateSpeed)
                 calculateCursorSpeed();
         }
