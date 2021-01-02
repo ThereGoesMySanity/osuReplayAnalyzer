@@ -206,7 +206,7 @@ namespace ReplayAPI
             }
 
             // ReplayFrames.RemoveRange(0, 3);
-            if (replayReader.BaseStream.Position != replayReader.BaseStream.Length)
+            if (replayReader.BaseStream.Length - replayReader.BaseStream.Position >= 8)
                 OnlineId = replayReader.ReadUInt64();
 
             //Todo: There are some extra bytes here
