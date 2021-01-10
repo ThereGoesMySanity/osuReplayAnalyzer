@@ -1,4 +1,4 @@
-using BMAPI.v1;
+﻿using BMAPI.v1;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -204,6 +204,11 @@ namespace OsuDbAPI
         {
             get; set;
         }
+        //just nomod for now
+        public double StarRating
+        {
+            get; set;
+        }
         public IEnumerable<string> SearchableTerms => new[]
         {
             Creator,
@@ -227,7 +232,7 @@ namespace OsuDbAPI
 
         public override string ToString()
         {
-            return $"{ArtistName} - {SongTitle} [{Difficulty}] ({Creator})";
+            return $"{ArtistName} - {SongTitle} [{Difficulty}] ({StarRating:F1}★) ({Creator})";
         }
     }
 }

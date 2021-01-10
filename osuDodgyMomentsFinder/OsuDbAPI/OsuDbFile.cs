@@ -75,6 +75,11 @@ namespace OsuDbAPI
                 if (byId) BeatmapsById[b.ID] = b;
             }
             this.fileReader.Dispose();
+            Beatmaps = Beatmaps.Where(b => b.GameMode == 0)
+                .OrderBy(b => b.ArtistName)
+                .ThenBy(b => b.SongTitle)
+                .ThenBy(b => b.Creator)
+                .ThenBy(b => b.StarRating).ToList();
         }
 
         public Beatmap GetBeatmapFromHash(string mapHash)
@@ -99,13 +104,14 @@ namespace OsuDbAPI
             return this.fileReader.ReadString();
         }
 
-        private void readIntDoublePair()
+        private (int mods, double stars) readIntDoublePair()
         {
-            // no need for star difficulty, so we don't keep this data
+            (int mods, double stars) t;
             this.fileReader.ReadByte();
-            this.fileReader.ReadInt32();
+            t.mods = this.fileReader.ReadInt32();
             this.fileReader.ReadByte();
-            this.fileReader.ReadDouble();
+            t.stars = this.fileReader.ReadDouble();
+            return t;
         }
 
         private void readTimingPoint()
@@ -145,7 +151,8 @@ namespace OsuDbAPI
                 n = this.fileReader.ReadInt32();
                 for(int j = 0; j < n; j++)
                 {
-                    this.readIntDoublePair();
+                    var diff = this.readIntDoublePair();
+                    if (i == 0 && diff.mods == 0) beatmap.StarRating = diff.stars;
                 }
             }
             beatmap.DrainTimeSeconds = this.fileReader.ReadInt32();
