@@ -52,24 +52,14 @@ namespace ReplayViewer.Curves
         private Vector2 CircleCenter(Vector2 A, Vector2 B, Vector2 C)
         {
             // finds the point of a circle from three points on it's edges
-            float yDelta_a = (float)(B.Y - A.Y);
-            float xDelta_a = (float)(B.X - A.X);
-            float yDelta_b = (float)(C.Y - B.Y);
-            float xDelta_b = (float)(C.X - B.X);
-            Vector2 center = new Vector2();
-            if(xDelta_a == 0)
-            {
-                xDelta_a = 0.00001f;
-            }
-            if(xDelta_b == 0)
-            {
-                xDelta_b = 0.00001f;
-            }
-            float aSlope = yDelta_a / xDelta_a;
-            float bSlope = yDelta_b / xDelta_b;
-            center.X = (aSlope * bSlope * (A.Y - C.Y) + bSlope * (A.X + B.X) - aSlope * (B.X + C.X)) / (2 * (bSlope - aSlope));
-            center.Y = -1 * (center.X - (A.X + B.X) / 2) / aSlope + (A.Y + B.Y) / 2;
-            return center;
+            Vector2 a = new Vector2((A.X + B.X) / 2, (A.Y + B.Y) / 2);
+            Vector2 u = new Vector2((A.Y - B.Y), (B.X - A.X));
+            Vector2 b = new Vector2((B.X + C.X) / 2, (B.Y + C.Y) / 2);
+            Vector2 v = new Vector2((B.Y - C.Y), (C.X - B.X));
+            Vector2 d = new Vector2(a.X - b.X, a.Y - b.Y);
+            double vu = v.X * u.Y - v.Y * u.X;
+            double g = (d.X * u.Y - d.Y * u.X) / vu;
+            return new Vector2(b.X + g * v.X, b.Y + g * v.Y);
         }
 
         private bool IsClockwise(Vector2 a, Vector2 b, Vector2 c)
