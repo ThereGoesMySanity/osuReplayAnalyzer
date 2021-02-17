@@ -75,6 +75,7 @@ namespace ReplayAPI
         Mania6K = (1 << 17),
         Mania7K = (1 << 18),
         Mania8K = (1 << 19),
+        TargetPractice = (1 << 23),
 
     }
     public static class ConvertMods
