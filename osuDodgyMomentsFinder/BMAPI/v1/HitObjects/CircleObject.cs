@@ -1,4 +1,5 @@
 ﻿using System;
+using osuDodgyMomentsFinder;
 
 namespace BMAPI.v1.HitObjects
 {
@@ -19,6 +20,7 @@ namespace BMAPI.v1.HitObjects
 
         public Point2 BaseLocation = new Point2(0, 0);
         public Point2 Location => BaseLocation + StackOffset;
+        public virtual Vector2 EndBaseLocation => BaseLocation.ToVector2();
         public double Radius => 23.05 - (Beatmap.CircleSize - 7) * 4.4825;
         public float StartTime
         {

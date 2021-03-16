@@ -83,7 +83,7 @@ namespace BMAPI
             return new Point2(Left.X * Right.X, Left.Y * Right.Y);
         }
 
-        internal Vector2 ToVector2()
+        public Vector2 ToVector2()
         {
             return new Vector2(this.X, this.Y);
         }

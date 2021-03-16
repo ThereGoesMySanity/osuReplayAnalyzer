@@ -650,6 +650,19 @@ namespace BMAPI.v1
 
         private void recalculateStackCoordinates()
         {
+            HitObjects.ForEach(o => o.StackHeight = 0);
+            if (Format >= 6)
+            {
+                applyStacking();
+            }
+            else
+            {
+                applyStackingOld();
+            }
+        }
+
+        private void applyStacking()
+        {
             double ApproachTimeWindow = Math.Min(1800 - 120 * ApproachRate, 1950 - 150 * ApproachRate);
             double stackTimeWindow = (ApproachTimeWindow * (StackLeniency ?? 7));
             float stack_distance = 3;
@@ -658,14 +671,104 @@ namespace BMAPI.v1
             //Console.WriteLine(StackLeniency);
             //Console.WriteLine(stackTimeWindow);
 
-            Dictionary<int, Point2> toChange = new Dictionary<int, Point2>();
-            for(int i = HitObjects.Count - 1; i >= 0; --i)
+            for (int i = HitObjects.Count - 1; i > 0; i--)
             {
-                /* not used
-                 * if (HitObjects[i].Location == new Point2(360,128))
+                int n = i;
+                /* We should check every note which has not yet got a stack.
+                    * Consider the case we have two interwound stacks and this will make sense.
+                    *
+                    * o <-1      o <-2
+                    *  o <-3      o <-4
+                    *
+                    * We first process starting from 4 and handle 2,
+                    * then we come backwards on the i loop iteration until we reach 3 and handle 1.
+                    * 2 and 1 will be ignored in the i loop because they already have a stack value.
+                    */
+
+                CircleObject objectI = HitObjects[i];
+                if (objectI.StackHeight != 0 || objectI.Type.HasFlag(HitObjectType.Spinner)) continue;
+
+                /* If this object is a hitcircle, then we enter this "special" case.
+                    * It either ends with a stack of hitcircles only, or a stack of hitcircles that are underneath a slider.
+                    * Any other case is handled by the "is Slider" code below this.
+                    */
+                if (objectI.Type.HasFlag(HitObjectType.Circle))
                 {
-                    int u = 0;
-                }*/
+                    while (--n >= 0)
+                    {
+                        CircleObject objectN = HitObjects[n];
+                        if (objectN.Type.HasFlag(HitObjectType.Spinner)) continue;
+
+                        double endTime = objectN.EndTime;
+
+                        if (objectI.StartTime - endTime > stackTimeWindow)
+                            // We are no longer within stacking range of the previous object.
+                            break;
+
+                        /* This is a special case where hticircles are moved DOWN and RIGHT (negative stacking) if they are under the *last* slider in a stacked pattern.
+                            *    o==o <- slider is at original location
+                            *        o <- hitCircle has stack of -1
+                            *         o <- hitCircle has stack of -2
+                            */
+                        if (objectN.Type.HasFlag(HitObjectType.Slider) && Vector2.Distance(objectN.EndBaseLocation, objectI.BaseLocation.ToVector2()) < stack_distance)
+                        {
+                            int offset = objectI.StackHeight - objectN.StackHeight + 1;
+
+                            for (int j = n + 1; j <= i; j++)
+                            {
+                                // For each object which was declared under this slider, we will offset it to appear *below* the slider end (rather than above).
+                                CircleObject objectJ = HitObjects[j];
+                                if (Vector2.Distance(objectN.EndBaseLocation, objectJ.BaseLocation.ToVector2()) < stack_distance)
+                                    objectJ.StackHeight -= offset;
+                            }
+
+                            // We have hit a slider.  We should restart calculation using this as the new base.
+                            // Breaking here will mean that the slider still has StackCount of 0, so will be handled in the i-outer-loop.
+                            break;
+                        }
+
+                        if (Vector2.Distance(objectN.BaseLocation.ToVector2(), objectI.BaseLocation.ToVector2()) < stack_distance)
+                        {
+                            // Keep processing as if there are no sliders.  If we come across a slider, this gets cancelled out.
+                            //NOTE: Sliders with start positions stacking are a special case that is also handled here.
+
+                            objectN.StackHeight = objectI.StackHeight + 1;
+                            objectI = objectN;
+                        }
+                    }
+                }
+                else if (objectI.Type.HasFlag(HitObjectType.Slider))
+                {
+                    /* We have hit the first slider in a possible stack.
+                        * From this point on, we ALWAYS stack positive regardless.
+                        */
+                    while (--n >= 0)
+                    {
+                        CircleObject objectN = HitObjects[n];
+                        if (objectN.Type.HasFlag(HitObjectType.Spinner)) continue;
+
+                        if (objectI.StartTime - objectN.StartTime > stackTimeWindow)
+                            // We are no longer within stacking range of the previous object.
+                            break;
+
+                        if (Vector2.Distance(objectN.EndBaseLocation, objectI.BaseLocation.ToVector2()) < stack_distance)
+                        {
+                            objectN.StackHeight = objectI.StackHeight + 1;
+                            objectI = objectN;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void applyStackingOld()
+        {
+            double ApproachTimeWindow = Math.Min(1800 - 120 * ApproachRate, 1950 - 150 * ApproachRate);
+            double stackTimeWindow = (ApproachTimeWindow * (StackLeniency ?? 7));
+            float stack_distance = 3;
+
+            for (int i = 0; i < HitObjects.Count; i++)
+            {
                 CircleObject currHitObject = HitObjects[i];
 
                 if (currHitObject.StackHeight != 0 && !(currHitObject is SliderObject))
@@ -676,16 +779,15 @@ namespace BMAPI.v1
 
                 for (int j = i + 1; j < HitObjects.Count; j++)
                 {
-
                     if (HitObjects[j].StartTime - stackTimeWindow > startTime)
                         break;
 
                     // The start position of the hitobject, or the position at the end of the path if the hitobject is a slider
                     Vector2 position2 = currHitObject is SliderObject currSlider
-                        ? currSlider.BaseLocation.ToVector2() + currSlider.PositionAtTime(1)
+                        ? currSlider.EndBaseLocation
                         : currHitObject.BaseLocation.ToVector2();
 
-                    if (HitObjects[j].BaseLocation.DistanceTo(currHitObject.BaseLocation) < stack_distance)
+                    if (Vector2.Distance(HitObjects[j].BaseLocation.ToVector2(), currHitObject.BaseLocation.ToVector2()) < stack_distance)
                     {
                         currHitObject.StackHeight++;
                         startTime = HitObjects[j].EndTime;
@@ -714,6 +816,8 @@ namespace BMAPI.v1
             CircleSize = Math.Min(CircleSize * 1.3f, 10.0f);
             ApproachRate = Math.Min(ApproachRate * ratio, 10.0f);
             OverallDifficulty = Math.Min(OverallDifficulty * ratio, 10.0f);
+
+            recalculateStackCoordinates();
         }
 
         public void applyEasy()
@@ -726,6 +830,8 @@ namespace BMAPI.v1
             CircleSize *= ratio;
             ApproachRate *= ratio;
             OverallDifficulty *= ratio;
+
+            recalculateStackCoordinates();
         }
 
 		public override string ToString()
