@@ -93,6 +93,7 @@ namespace ReplayAPI
             [Mods.NightCore] = "NC",
             [Mods.FlashLight] = "FL",
             [Mods.Perfect] = "PF",
+            [Mods.SpunOut] = "SO",
         };
         private static Dictionary<string, int> modValues = new Dictionary<string, int>
         {
@@ -107,6 +108,7 @@ namespace ReplayAPI
             ["NC"] = (int)Mods.NightCore,
             ["FL"] = (int)Mods.FlashLight,
             ["PF"] = (int)Mods.Perfect,
+            ["SO"] = (int)Mods.SpunOut,
         };
         public static string ModsToString(this Mods mods)
         {
