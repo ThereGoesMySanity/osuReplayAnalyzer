@@ -273,6 +273,10 @@ namespace BMAPI.v1
 
                         float[] values = { 0, 0, 4, 0, 0, 100, 0, 0, 0 };
                         string[] reSplit = line.Split(',');
+                        
+                        //https://github.com/Francesco149/koohii/issues/6
+                        if (reSplit.Length == 1) continue;
+
                         for(int i = 0; i < reSplit.Length; i++)
                             values[i] = (float)Convert.ToDouble(reSplit[i]);
                         tempTimingPoint.InheritsBPM = !Convert.ToBoolean(Convert.ToInt32(values[6]));
