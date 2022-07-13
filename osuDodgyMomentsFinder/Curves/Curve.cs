@@ -69,6 +69,7 @@ namespace ReplayViewer.Curves
                     if(PixelLength > 0 && distance > this.PixelLength)
                     {
                         AddDistanceTime(this.PixelLength, 1, Lerp(Points[0], Points[1], PixelLength / distance));
+                        distance = this.PixelLength;
                     }
                     else
                     {
