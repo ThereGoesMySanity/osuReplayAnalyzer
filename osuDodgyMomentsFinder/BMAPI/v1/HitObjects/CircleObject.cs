@@ -47,6 +47,11 @@ namespace BMAPI.v1.HitObjects
             return Math.Sqrt(Math.Pow((double)Point.X - (double)Location.X, 2) + Math.Pow((double)Point.Y - (double)Location.Y, 2)) <= Radius;
         }
 
+        public float DistanceToPoint(Point2 Point)
+        {
+            return (float)(Math.Sqrt(Math.Pow((double)Point.X - (double)Location.X, 2) + Math.Pow((double)Point.Y - (double)Location.Y, 2)) - Radius);
+        }
+
         public override string ToString() 
         {
             string res = "";
