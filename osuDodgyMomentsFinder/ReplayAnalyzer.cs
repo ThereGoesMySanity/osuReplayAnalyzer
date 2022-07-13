@@ -122,6 +122,10 @@ namespace osuDodgyMomentsFinder
                 if (note.Type.HasFlag(HitObjectType.Spinner))
                     continue;
 
+                //if there are no more replay frames, stop processing
+                if (replay.ReplayFrames[^1].Time < note.StartTime - hitTimeWindow)
+                    break;
+
                 for (int j = keyIndex; j < replay.ReplayFrames.Count; ++j)
                 {
                     var frame = replay.ReplayFrames[j];
