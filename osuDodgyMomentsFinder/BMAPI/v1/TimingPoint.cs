@@ -15,7 +15,7 @@ namespace BMAPI.v1
             set
             {
                 this.bpmDelay = value;
-                if (this.InheritsBPM)
+                if (this.InheritsBPM && value < 0)
                 {
                     this.sliderBpm = -100 * TimingPoint.lastBpm / value;
                 }
