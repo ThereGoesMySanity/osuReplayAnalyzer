@@ -184,6 +184,7 @@ namespace osuDodgyMomentsFinder
                     }
 
                     frame.combo = combo;
+                    lastPress = Keys.None;
 
                 }
 

@@ -126,6 +126,8 @@ namespace BMAPI.v1
             Info.Folder = ffii.DirectoryName;
             Info.Filename = bm;
             Info.BeatmapHash = MD5FromFile(bm);
+
+            bool hasApproachRate = false;
             using(StreamReader sR = new StreamReader(bm))
             {
                 string currentSection = "";
@@ -198,6 +200,14 @@ namespace BMAPI.v1
                                 break;
                             case "AlwaysShowPlayfield":
                                 Info.AlwaysShowPlayfield = Convert.ToBoolean(Convert.ToInt32(cValue));
+                                break;
+                            case "ApproachRate":
+                                hasApproachRate = true;
+                                Info.ApproachRate = (float)Convert.ToDouble(cValue);
+                                break;
+                            case "OverallDifficulty":
+                                Info.OverallDifficulty = (float)Convert.ToDouble(cValue);
+                                if (!hasApproachRate) Info.ApproachRate = Info.OverallDifficulty;
                                 break;
                             default:
                                 FieldInfo fi = Info.GetType().GetField(cProperty);
