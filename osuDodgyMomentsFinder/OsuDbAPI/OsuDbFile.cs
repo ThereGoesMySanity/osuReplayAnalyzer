@@ -104,13 +104,13 @@ namespace OsuDbAPI
             return this.fileReader.ReadString();
         }
 
-        private (int mods, double stars) readIntDoublePair()
+        private (int mods, float stars) readIntFloatPair()
         {
-            (int mods, double stars) t;
+            (int mods, float stars) t;
             this.fileReader.ReadByte();
             t.mods = this.fileReader.ReadInt32();
             this.fileReader.ReadByte();
-            t.stars = this.fileReader.ReadDouble();
+            t.stars = this.fileReader.ReadSingle();
             return t;
         }
 
@@ -151,7 +151,7 @@ namespace OsuDbAPI
                 n = this.fileReader.ReadInt32();
                 for(int j = 0; j < n; j++)
                 {
-                    var diff = this.readIntDoublePair();
+                    var diff = this.readIntFloatPair();
                     if (i == 0 && diff.mods == 0) beatmap.StarRating = diff.stars;
                 }
             }
