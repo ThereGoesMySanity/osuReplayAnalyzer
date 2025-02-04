@@ -104,6 +104,17 @@ namespace OsuDbAPI
             return this.fileReader.ReadString();
         }
 
+        private (int mods, double stars) readIntDoublePair()
+        {
+            (int mods, double stars) t;
+            this.fileReader.ReadByte();
+            t.mods = this.fileReader.ReadInt32();
+            this.fileReader.ReadByte();
+            t.stars = this.fileReader.ReadDouble();
+            return t;
+        }
+
+
         private (int mods, float stars) readIntFloatPair()
         {
             (int mods, float stars) t;
@@ -151,8 +162,11 @@ namespace OsuDbAPI
                 n = this.fileReader.ReadInt32();
                 for(int j = 0; j < n; j++)
                 {
-                    var diff = this.readIntFloatPair();
-                    if (i == 0 && diff.mods == 0) beatmap.StarRating = diff.stars;
+                    
+                    var (mods, stars) = Version >= 20250107?
+                          this.readIntFloatPair()
+                        : this.readIntDoublePair();
+                    if (i == 0 && mods == 0) beatmap.StarRating = stars;
                 }
             }
             beatmap.DrainTimeSeconds = this.fileReader.ReadInt32();
