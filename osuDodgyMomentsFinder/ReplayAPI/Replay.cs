@@ -27,8 +27,8 @@ namespace ReplayAPI
         public UInt16 Count300;
         public UInt16 Count100;
         public UInt16 Count50;
-        public UInt16 CountGeki;
-        public UInt16 CountKatu;
+        public UInt16? CountGeki;
+        public UInt16? CountKatu;
         public UInt16 CountMiss;
         public UInt16 MaxCombo;
         public bool IsPerfect;
@@ -225,8 +225,8 @@ namespace ReplayAPI
                 bw.Write(Count300);
                 bw.Write(Count100);
                 bw.Write(Count50);
-                bw.Write(CountGeki);
-                bw.Write(CountKatu);
+                bw.Write(CountGeki ?? 0);
+                bw.Write(CountKatu ?? 0);
                 bw.Write(CountMiss);
                 bw.Write(TotalScore);
                 bw.Write((UInt16)MaxCombo);
